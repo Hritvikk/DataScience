@@ -1,0 +1,53 @@
+Query 1
+
+SELECT CustomerID, FirstName, LastName, City
+FROM Customers
+WHERE FirstName LIKE 'N%' OR City = 'Berlin';
+
+Query 2
+
+SELECT TrackId, Name, Composer, UnitPrice
+FROM Tracks
+WHERE Composer NOT LIKE '%T%'
+  AND UnitPrice >= 0
+  AND UnitPrice <= 0.99;
+
+Query 3
+
+SELECT InvoiceDate,
+       sum(Total) AS SUM,
+       avg(Total) AS Average
+  	FROM Invoices
+ 	WHERE
+		InvoiceDate >= '2020-06-01 00:00:00' AND InvoiceDate < '2020-07-01 11:59:59'
+	GROUP BY
+		InvoiceDate;
+ 
+Query 4
+
+SELECT TrackID, SUM(Quantity) AS TotalQuantity
+FROM invoice_items
+GROUP BY TrackID
+ORDER BY TotalQuantity DESC;
+
+Query 5
+
+SELECT A.ArtistID, A.Name
+FROM Artists A
+WHERE A.ArtistID NOT IN (
+  SELECT DISTINCT T.albumid
+  FROM Tracks T
+  WHERE T.TrackID IN (
+    SELECT PT.TrackID
+    FROM playlist_track PT
+  )
+);
+
+Query 6
+
+SELECT A.AlbumID, A.Title, COUNT(PT.PlaylistID) AS PlaylistCount
+FROM Albums A
+JOIN Tracks T ON A.AlbumID = T.AlbumID
+JOIN playlist_track  PT ON T.TrackID = PT.TrackID
+GROUP BY A.AlbumID, A.Title
+HAVING COUNT(DISTINCT PT.PlaylistID) > 10;
